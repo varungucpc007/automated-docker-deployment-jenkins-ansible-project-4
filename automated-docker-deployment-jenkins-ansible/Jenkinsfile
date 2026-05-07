@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "varungucpc007/automated-docker-deployment-cicd"
+        IMAGE_NAME = "varungucpc007/automated-docker-deployment-jenkins-ansible"
     }
 
     stages {
@@ -11,6 +11,12 @@ pipeline {
                 checkout scm
             }
         }
+        
+        stage('Check Files') {
+    steps {
+        sh 'ls -la'
+    }
+}
 
         stage('Build Docker Image') {
             steps {
