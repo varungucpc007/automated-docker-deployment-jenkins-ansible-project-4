@@ -48,6 +48,14 @@ pipeline {
             }
         }
 
+stage('Check Ansible') {
+    steps {
+        sh 'which ansible-playbook'
+        sh 'ansible-playbook --version'
+    }
+}
+
+        
         stage('Deploy Using Ansible') {
             steps {
                 dir('automated-docker-deployment-jenkins-ansible') {
