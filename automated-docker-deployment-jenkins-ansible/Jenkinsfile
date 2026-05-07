@@ -6,29 +6,37 @@ pipeline {
     }
 
     stages {
+
         stage('Clone Code') {
             steps {
                 checkout scm
             }
         }
-        
+
         stage('Check Files') {
-    steps {
-        sh 'ls -la'
-    }
-}
+            steps {
+                sh 'ls -la'
+                sh 'ls -la automated-docker-deployment-jenkins-ansible'
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
                 dir('automated-docker-deployment-jenkins-ansible') {
                     sh 'docker build -t $IMAGE_NAME:latest .'
+                }
             }
-        }
         }
 
         stage('Login To Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
                     sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                 }
             }
@@ -42,7 +50,9 @@ pipeline {
 
         stage('Deploy Using Ansible') {
             steps {
-                sh 'ansible-playbook -i inventory.ini deploy.yml'
+                dir('automated-docker-deployment-jenkins-ansible') {
+                    sh 'ansible-playbook -i inventory.ini deploy.yml'
+                }
             }
         }
     }
