@@ -20,8 +20,10 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:latest .'
+                dir('automated-docker-deployment-jenkins-ansible') {
+                    sh 'docker build -t $IMAGE_NAME:latest .'
             }
+        }
         }
 
         stage('Login To Docker Hub') {
